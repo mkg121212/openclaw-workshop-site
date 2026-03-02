@@ -91,6 +91,13 @@ function updateActiveNav() {
   });
 }
 
+function setActiveNavById(id) {
+  navLinks.forEach((link) => {
+    const linkId = link.getAttribute('href').slice(1);
+    link.classList.toggle('active', linkId === id);
+  });
+}
+
 function updateRouteMap() {
   if (!routeActive) return;
   const doc = document.documentElement;
@@ -130,6 +137,21 @@ window.addEventListener('scroll', () => {
   updateBackgroundDrift();
 }, { passive: true });
 
+navLinks.forEach((link) => {
+  link.addEventListener('click', () => {
+    const id = link.getAttribute('href').slice(1);
+    setActiveNavById(id);
+    requestAnimationFrame(updateActiveNav);
+    setTimeout(updateActiveNav, 420);
+  });
+});
+
+window.addEventListener('hashchange', () => {
+  const id = window.location.hash.replace('#', '');
+  if (id) setActiveNavById(id);
+  requestAnimationFrame(updateActiveNav);
+});
+
 updateProgress();
 updateParallax();
 updateSceneSteps();
@@ -137,6 +159,11 @@ updateActiveNav();
 updateRouteMap();
 updateTitleDrift();
 updateBackgroundDrift();
+
+if (window.location.hash) {
+  const id = window.location.hash.replace('#', '');
+  if (id) setActiveNavById(id);
+}
 
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
