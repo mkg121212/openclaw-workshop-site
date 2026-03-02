@@ -4,9 +4,12 @@ const parallaxEls = [...document.querySelectorAll('.parallax')];
 const tiltEls = [...document.querySelectorAll('.tilt')];
 const sectionEls = [...document.querySelectorAll('section[id]')];
 const navLinks = [...document.querySelectorAll('.nav a[href^="#"]')];
+const navEl = document.querySelector('.nav');
 const routedSections = [...document.querySelectorAll('main > section.story, main > section.panel-block')];
 const movingTitles = [...document.querySelectorAll('main > section.story h2, main > section.panel-block h2')];
 const routeActive = document.getElementById('route-active');
+let navPinId = '';
+let navPinUntil = 0;
 
 function updateProgress() {
   const doc = document.documentElement;
@@ -78,6 +81,14 @@ function updateSceneSteps() {
 }
 
 function updateActiveNav() {
+  if (navPinId && Date.now() < navPinUntil) {
+    setActiveNavById(navPinId);
+    return;
+  }
+  if (navPinId && Date.now() >= navPinUntil) {
+    navPinId = '';
+  }
+
   const offset = 160;
   let activeId = '';
   sectionEls.forEach((sec) => {
@@ -138,11 +149,20 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 navLinks.forEach((link) => {
-  link.addEventListener('click', () => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
     const id = link.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (target) {
+      const navOffset = (navEl ? navEl.getBoundingClientRect().height : 0) + 22;
+      const top = Math.max(0, target.getBoundingClientRect().top + window.scrollY - navOffset);
+      navPinId = id;
+      navPinUntil = Date.now() + 1200;
+      window.scrollTo({ top, behavior: 'smooth' });
+      history.replaceState(null, '', `#${id}`);
+    }
     setActiveNavById(id);
     requestAnimationFrame(updateActiveNav);
-    setTimeout(updateActiveNav, 420);
   });
 });
 
@@ -162,7 +182,10 @@ updateBackgroundDrift();
 
 if (window.location.hash) {
   const id = window.location.hash.replace('#', '');
-  if (id) setActiveNavById(id);
+  if (id) {
+    setActiveNavById(id);
+    setTimeout(updateActiveNav, 60);
+  }
 }
 
 const canvas = document.getElementById('bg-canvas');
