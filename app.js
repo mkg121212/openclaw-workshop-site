@@ -10,23 +10,43 @@ const movingTitles = [...document.querySelectorAll('main > section.story h2, mai
 const routeActive = document.getElementById('route-active');
 let navPinId = '';
 let navPinUntil = 0;
+let navOffsetPx = 110;
+
+function getScrollTop() {
+  return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+}
+
+function getScrollMax() {
+  const doc = document.documentElement;
+  const body = document.body;
+  const scrollHeight = Math.max(doc.scrollHeight, body ? body.scrollHeight : 0);
+  const clientHeight = window.innerHeight || doc.clientHeight || 1;
+  return Math.max(1, scrollHeight - clientHeight);
+}
+
+function updateNavOffsetVar() {
+  navOffsetPx = (navEl ? navEl.getBoundingClientRect().height : 0) + 24;
+  document.documentElement.style.setProperty('--nav-offset', `${Math.round(navOffsetPx)}px`);
+}
 
 function updateProgress() {
-  const doc = document.documentElement;
-  const max = doc.scrollHeight - doc.clientHeight;
-  const ratio = max > 0 ? doc.scrollTop / max : 0;
+  const max = getScrollMax();
+  const ratio = getScrollTop() / max;
   progressBar.style.width = `${Math.max(0, Math.min(1, ratio)) * 100}%`;
 }
 
-const io = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) entry.target.classList.add('visible');
-  });
-}, { threshold: 0.2 });
+const io = ('IntersectionObserver' in window)
+  ? new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' })
+  : null;
 
 reveals.forEach((el, i) => {
   el.style.transitionDelay = `${Math.min(i * 35, 280)}ms`;
-  io.observe(el);
+  if (io) io.observe(el);
+  else el.classList.add('visible');
 });
 
 routedSections.forEach((sec, i) => {
@@ -46,7 +66,7 @@ const sectionObserver = new IntersectionObserver((entries) => {
 sectionEls.forEach((s) => sectionObserver.observe(s));
 
 function updateParallax() {
-  const y = window.scrollY;
+  const y = getScrollTop();
   parallaxEls.forEach((el) => {
     const speed = Number(el.dataset.speed || 0.08);
     el.style.transform = `translate3d(0, ${-y * speed * 0.12}px, 0)`;
@@ -89,13 +109,23 @@ function updateActiveNav() {
     navPinId = '';
   }
 
-  const offset = 160;
-  let activeId = '';
+  const marker = navOffsetPx + 14;
+  let activeId = sectionEls[0] ? sectionEls[0].id : '';
+  let bestPast = -Infinity;
+  let bestFuture = Infinity;
+
   sectionEls.forEach((sec) => {
-    if (window.scrollY >= sec.offsetTop - offset) {
+    const top = sec.getBoundingClientRect().top - marker;
+    if (top <= 0 && top > bestPast) {
+      bestPast = top;
+      activeId = sec.id;
+    }
+    if (top > 0 && top < bestFuture && bestPast === -Infinity) {
+      bestFuture = top;
       activeId = sec.id;
     }
   });
+
   navLinks.forEach((link) => {
     const id = link.getAttribute('href').slice(1);
     link.classList.toggle('active', id === activeId);
@@ -111,9 +141,8 @@ function setActiveNavById(id) {
 
 function updateRouteMap() {
   if (!routeActive) return;
-  const doc = document.documentElement;
-  const max = doc.scrollHeight - doc.clientHeight;
-  const ratio = max > 0 ? doc.scrollTop / max : 0;
+  const max = getScrollMax();
+  const ratio = getScrollTop() / max;
   const len = routeActive.getTotalLength();
   routeActive.style.strokeDasharray = `${len}`;
   routeActive.style.strokeDashoffset = `${len * (1 - ratio)}`;
@@ -134,7 +163,7 @@ function updateTitleDrift() {
 }
 
 function updateBackgroundDrift() {
-  const y = window.scrollY || 0;
+  const y = getScrollTop();
   document.body.style.setProperty('--bg-drift', `${y}px`);
 }
 
@@ -154,11 +183,10 @@ navLinks.forEach((link) => {
     const id = link.getAttribute('href').slice(1);
     const target = document.getElementById(id);
     if (target) {
-      const navOffset = (navEl ? navEl.getBoundingClientRect().height : 0) + 22;
-      const top = Math.max(0, target.getBoundingClientRect().top + window.scrollY - navOffset);
+      updateNavOffsetVar();
       navPinId = id;
       navPinUntil = Date.now() + 1200;
-      window.scrollTo({ top, behavior: 'smooth' });
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       history.replaceState(null, '', `#${id}`);
     }
     setActiveNavById(id);
@@ -173,6 +201,7 @@ window.addEventListener('hashchange', () => {
 });
 
 updateProgress();
+updateNavOffsetVar();
 updateParallax();
 updateSceneSteps();
 updateActiveNav();
@@ -277,6 +306,7 @@ resize();
 requestAnimationFrame(draw);
 window.addEventListener('resize', resize);
 window.addEventListener('resize', () => {
+  updateNavOffsetVar();
   updateRouteMap();
   updateTitleDrift();
   updateBackgroundDrift();
@@ -869,7 +899,7 @@ window.addEventListener('keydown', (e) => {
     triggerLobsterRain();
   }
 
-  const nearBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 280;
+  const nearBottom = window.innerHeight + getScrollTop() >= Math.max(document.documentElement.scrollHeight, document.body.scrollHeight) - 280;
   if (!nearBottom || e.key.length !== 1) return;
   typeBuffer = (typeBuffer + key).slice(-10);
   if (typeBuffer.includes(':agent')) {
