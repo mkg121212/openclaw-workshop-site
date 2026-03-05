@@ -23,6 +23,28 @@
     </svg>
   </div>
   <div class="progress"><span id="progress-bar"></span></div>
+  <div class="update-modal" id="update-modal" aria-hidden="true">
+    <div class="update-backdrop" data-update-close></div>
+    <section class="update-panel" role="dialog" aria-modal="true" aria-labelledby="update-title">
+      <p class="eyebrow">UPDATE LOG</p>
+      <h2 id="update-title">V3 更新日志</h2>
+      <div class="update-list">
+        <p><b>1.0</b>：完成课程主线结构（是什么 / 为什么 / 能力 / 安装 / 演示 / FAQ）。</p>
+        <p><b>1.1</b>：补充 OpenClaw 网关结构图与技术原理（大白话）。</p>
+        <p><b>1.2</b>：补齐 macOS / Windows 环境安装与测试流程。</p>
+        <p><b>2.0</b>：新增模型双路线（Ollama 零成本 + Kimi 2.5 生产力）。</p>
+        <p><b>2.1</b>：新增 TG / WhatsApp 配置板块与快速跳转入口。</p>
+        <p><b>2.2</b>：新增核心 skills、token 优化、常见问题与文档路径。</p>
+        <p><b>2.3</b>：新增实机演示流程图与 Codex 快速安装入口。</p>
+        <p><b>3.0</b>：加入像素风 + CRT 动效 + 隐藏彩蛋小游戏系统。</p>
+        <p><b>3.1</b>：新增“隐藏服务”独立页面与感谢页快捷跳转。</p>
+        <p><b>3.2</b>：统一外链新开页、Safari 跳转/高亮修复、移动端适配增强。</p>
+      </div>
+      <div class="update-actions">
+        <button class="btn primary" id="update-close-btn" type="button">开始浏览</button>
+      </div>
+    </section>
+  </div>
 
   <header class="nav">
     <div class="logo">OpenClaw Workshop</div>
@@ -32,6 +54,7 @@
       <a href="#story">为什么</a>
       <a href="#capabilities">能力</a>
       <a href="#chat-apps">聊天软件</a>
+      <a href="#channels-setup">TG/WA配置</a>
       <a href="#models">大模型</a>
       <a href="#ollama">Ollama</a>
       <a href="#kimi25">Kimi 2.5</a>
@@ -243,6 +266,42 @@
       </div>
     </section>
 
+    <section class="panel-block lobster" id="channels-setup">
+      <div class="panel-title reveal">
+        <p class="eyebrow">CHANNEL SETUP</p>
+        <h2>聊天软件配置方法（TG / WhatsApp）</h2>
+        <p class="lead-mini">推荐先配 Telegram（最快跑通），再配 WhatsApp（适合真实日常沟通场景）。</p>
+      </div>
+      <div class="cards two">
+        <article class="card reveal">
+          <h3>Telegram（TG）配置</h3>
+          <ul>
+            <li>打开 BotFather 创建机器人，拿到 Bot Token</li>
+            <li>在 OpenClaw 渠道配置中填写 Telegram token</li>
+            <li>给机器人发消息，确认消息能进网关</li>
+            <li>完成后先做 1 次“问答 + 执行”闭环测试</li>
+          </ul>
+          <div class="jump-row">
+            <a class="btn ghost" href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer">打开 BotFather</a>
+            <a class="btn ghost" href="https://docs.openclaw.ai" target="_blank" rel="noopener noreferrer">查看 OpenClaw 配置文档</a>
+          </div>
+        </article>
+        <article class="card reveal">
+          <h3>WhatsApp 配置</h3>
+          <ul>
+            <li>先准备可登录的 WhatsApp 账号</li>
+            <li>在 OpenClaw 里启用 WhatsApp 渠道配置</li>
+            <li>按提示完成设备配对（扫码或授权）</li>
+            <li>发送测试消息，确认网关收到并返回结果</li>
+          </ul>
+          <div class="jump-row">
+            <a class="btn ghost" href="https://web.whatsapp.com/" target="_blank" rel="noopener noreferrer">打开 WhatsApp Web</a>
+            <a class="btn ghost" href="https://docs.openclaw.ai" target="_blank" rel="noopener noreferrer">查看 OpenClaw 配置文档</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <section class="panel-block lobster" id="models">
       <div class="panel-title reveal">
         <p class="eyebrow">MODEL PROVIDERS</p>
@@ -289,7 +348,8 @@
     <section class="panel-block lobster" id="ollama">
       <div class="panel-title reveal">
         <p class="eyebrow">OLLAMA · FREE PATH</p>
-        <h2>零成本跑通：Ollama 本地模型</h2>
+        <h2 id="ollama-title-trigger">零成本跑通：Ollama 本地模型</h2>
+        <p class="lead-mini"><a class="btn ghost" href="https://ollama.com/download" target="_blank" rel="noopener noreferrer">点击安装 Ollama</a></p>
       </div>
       <div class="cards two">
         <article class="card reveal">
@@ -344,7 +404,7 @@ ollama serve
             <li>进入真实生产任务</li>
           </ul>
         </article>
-        <article class="card reveal">
+        <article class="card reveal" id="moonshot-config-card" role="button" aria-label="打开 Moonshot 控制台">
           <h3>配置思路（Moonshot）</h3>
 <pre><code># 1) 准备 API Key
 # 2) onboarding 或配置文件填 key
@@ -373,6 +433,7 @@ ollama serve
         <p class="eyebrow">LIVE DEMO</p>
         <h2>实机演示</h2>
         <p class="lead-mini">这一段会走完整流程，目标是现场跑通“模型 + 渠道 + 网关”的闭环。</p>
+        <p class="lead-mini"><a class="btn quick-install-btn" href="https://openai.com/codex" target="_blank" rel="noopener noreferrer">点击这里快速安装</a></p>
       </div>
 
       <div class="demo-flow reveal" aria-label="实机演示流程图">
@@ -438,22 +499,32 @@ ollama serve
           <h3>macOS 环境</h3>
           <ul>
             <li>Homebrew</li>
-            <li>Node.js 22+（含 npm）</li>
+            <li>Node.js（建议 LTS，含 npm）</li>
             <li>Git</li>
           </ul>
+          <h4>安装命令</h4>
 <pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 brew install node git
-node -v
+</code></pre>
+          <h4>测试命令</h4>
+<pre><code>node -v
 npm -v
 git --version</code></pre>
         </article>
         <article class="card reveal tilt">
           <h3>Windows 环境</h3>
           <ul>
-            <li>安装 Node.js 22+</li>
-            <li>安装 Git for Windows</li>
+            <li>手动安装 Node.js LTS（官方安装包）</li>
+            <li>手动安装 Git for Windows</li>
             <li>建议使用 PowerShell 或 Windows Terminal</li>
+            <li>推荐可用版本：Node v22.x / npm v10.x / Git 2.50.x 左右</li>
           </ul>
+          <h4>手动安装入口</h4>
+          <div class="jump-row">
+            <a class="btn ghost" href="https://nodejs.org/en/download" target="_blank" rel="noopener noreferrer">Node.js LTS 下载</a>
+            <a class="btn ghost" href="https://git-scm.com/download/win" target="_blank" rel="noopener noreferrer">Git for Windows 下载</a>
+          </div>
+          <h4>测试命令</h4>
 <pre><code>node -v
 npm -v
 git --version</code></pre>
@@ -466,6 +537,25 @@ git --version</code></pre>
         <p class="eyebrow">SKILLS CORE</p>
         <h2>为什么你的 OpenClaw 难用？</h2>
         <p class="lead-mini">响应迟钝、功能缺失或无法执行任务，常见原因不是模型本身，而是核心 skills 没装好、没配好。</p>
+        <div class="jump-row">
+          <a class="btn ghost" href="https://clawhub.com" target="_blank" rel="noopener noreferrer">ClawHub 官方插件市场</a>
+          <a class="btn ghost" href="https://docs.openclaw.ai" target="_blank" rel="noopener noreferrer">OpenClaw 文档</a>
+          <a class="btn ghost" href="https://ollama.com/library" target="_blank" rel="noopener noreferrer">Ollama 模型库</a>
+          <a class="btn ghost" href="https://github.com/openclaw/skill-examples" target="_blank" rel="noopener noreferrer">GitHub 示例仓库</a>
+          <a class="btn ghost" href="https://discord.com/invite/clawd" target="_blank" rel="noopener noreferrer">Discord 社区</a>
+          <a class="btn ghost" href="https://github.com/search?q=openclaw+model-usage&type=repositories" target="_blank" rel="noopener noreferrer">model-usage 成本监控</a>
+        </div>
+        <div class="install-cli reveal">
+          <h3>命令行安装技能（推荐）</h3>
+<pre><code># 1) 搜索技能
+clawhub search slack
+
+# 2) 安装技能
+clawhub install slack-1.0.0
+
+# 3) 验证安装
+clawhub list</code></pre>
+        </div>
       </div>
       <div class="pixel-strip reveal" aria-label="skills状态像素条">
         <span>NET: MISSING?</span>
@@ -581,6 +671,7 @@ git --version</code></pre>
       <div class="panel-title reveal">
         <p class="eyebrow">DOCS MAP</p>
         <h2>官方文档全景（按学习顺序）</h2>
+        <p class="lead-mini"><a class="btn ghost" href="https://docs.openclaw.ai" target="_blank" rel="noopener noreferrer">点击跳转 OpenClaw 官网文档</a></p>
       </div>
       <div class="path-list wide">
         <div class="path-item reveal"><span>1</span><div><h4>Start</h4><p>getting-started / onboarding / quickstart / wizard</p></div></div>
@@ -628,8 +719,13 @@ git --version</code></pre>
       <h2 class="reveal">感谢</h2>
       <p class="subtitle reveal">让AI干活（二）玩转 OpenClaw</p>
       <p class="lead reveal">分享者：马凯歌</p>
-      <a href="https://docs.openclaw.ai" target="_blank" rel="noreferrer" class="btn primary reveal">继续阅读官方文档</a>
-      <a class="ad-slot" href="./ad.html" target="_blank" rel="noreferrer" aria-label="打开广告页面">
+      <a href="https://docs.openclaw.ai" target="_blank" rel="noopener noreferrer" class="btn primary reveal">继续阅读官方文档</a>
+      <div class="quick-links reveal" aria-label="常用快速跳转">
+        <a class="quick-text" href="https://ollama.com/download" target="_blank" rel="noopener noreferrer" title="Ollama">Ollama</a>
+        <a class="quick-text" href="https://platform.moonshot.cn/console/account" target="_blank" rel="noopener noreferrer" title="Moonshot 控制台">Moonshot</a>
+        <a class="quick-text" href="https://openai.com/codex" target="_blank" rel="noopener noreferrer" title="OpenAI Codex">Codex</a>
+      </div>
+      <a class="ad-slot" href="./ad.html" target="_blank" rel="noopener noreferrer" aria-label="打开广告页面">
         <div class="ad-text">隐藏服务</div>
       </a>
     </section>

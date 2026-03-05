@@ -5,12 +5,16 @@ const tiltEls = [...document.querySelectorAll('.tilt')];
 const sectionEls = [...document.querySelectorAll('section[id]')];
 const navLinks = [...document.querySelectorAll('.nav a[href^="#"]')];
 const navEl = document.querySelector('.nav');
+const updateModal = document.getElementById('update-modal');
+const updateCloseBtn = document.getElementById('update-close-btn');
+const updateCloseTargets = [...document.querySelectorAll('[data-update-close]')];
 const routedSections = [...document.querySelectorAll('main > section.story, main > section.panel-block')];
 const movingTitles = [...document.querySelectorAll('main > section.story h2, main > section.panel-block h2')];
 const routeActive = document.getElementById('route-active');
 let navPinId = '';
 let navPinUntil = 0;
 let navOffsetPx = 110;
+const CHANGELOG_VERSION = '3.2.0';
 
 function getScrollTop() {
   return window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
@@ -217,6 +221,33 @@ if (window.location.hash) {
   }
 }
 
+function openUpdateModal() {
+  if (!updateModal) return;
+  updateModal.classList.add('open');
+  updateModal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+}
+
+function closeUpdateModal() {
+  if (!updateModal) return;
+  updateModal.classList.remove('open');
+  updateModal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+  localStorage.setItem('openclaw_changelog_seen', CHANGELOG_VERSION);
+}
+
+if (updateModal) {
+  const seen = localStorage.getItem('openclaw_changelog_seen');
+  if (seen !== CHANGELOG_VERSION) {
+    requestAnimationFrame(() => setTimeout(openUpdateModal, 120));
+  }
+  if (updateCloseBtn) updateCloseBtn.addEventListener('click', closeUpdateModal);
+  updateCloseTargets.forEach((el) => el.addEventListener('click', closeUpdateModal));
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && updateModal.classList.contains('open')) closeUpdateModal();
+  });
+}
+
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 let w = 0;
@@ -329,6 +360,8 @@ tiltEls.forEach((el) => {
 const lobsterLogo = 'https://mintcdn.com/clawdhub/A8OxQpxR3DcyCCHY/assets/pixel-lobster.svg?fit=max&auto=format&n=A8OxQpxR3DcyCCHY&q=85&s=7d28d01258a677dc2c3e3ad383948e91';
 const heroTitle = document.querySelector('#hero h1');
 const thanksLogo = document.querySelector('#thanks .thanks-logo');
+const moonshotConfigCard = document.getElementById('moonshot-config-card');
+const ollamaTitleTrigger = document.getElementById('ollama-title-trigger');
 const gameLayer = document.getElementById('lobster-game');
 const gameCanvas = document.getElementById('lobster-game-canvas');
 const gameCtx = gameCanvas ? gameCanvas.getContext('2d') : null;
@@ -377,7 +410,10 @@ let heroTap = 0;
 let heroTapTimer = null;
 let thanksTap = 0;
 let thanksTapTimer = null;
+let ollamaTap = 0;
+let ollamaTapTimer = null;
 let rocketBuffer = '';
+let commandBuffer = '';
 let gameActive = false;
 let gameRaf = 0;
 let gameOver = false;
@@ -438,6 +474,26 @@ if (heroTitle) {
     if (heroTap >= 3) {
       heroTap = 0;
       triggerTerminalMode();
+    }
+  });
+}
+
+if (moonshotConfigCard) {
+  moonshotConfigCard.style.cursor = 'pointer';
+  moonshotConfigCard.addEventListener('click', () => {
+    window.open('https://platform.moonshot.cn/console/account', '_blank', 'noopener,noreferrer');
+  });
+}
+
+if (ollamaTitleTrigger) {
+  ollamaTitleTrigger.style.cursor = 'pointer';
+  ollamaTitleTrigger.addEventListener('click', () => {
+    ollamaTap += 1;
+    clearTimeout(ollamaTapTimer);
+    ollamaTapTimer = setTimeout(() => { ollamaTap = 0; }, 1000);
+    if (ollamaTap >= 3) {
+      ollamaTap = 0;
+      window.open('https://ollama.com', '_blank', 'noopener,noreferrer');
     }
   });
 }
@@ -891,6 +947,15 @@ window.addEventListener('keydown', (e) => {
   if (isInput) return;
 
   const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+
+  if (e.key.length === 1) {
+    commandBuffer = (commandBuffer + key).slice(-16);
+    if (commandBuffer.includes('vpn')) {
+      commandBuffer = '';
+      window.open('https://ikuuu.pw/auth/login', '_blank', 'noopener,noreferrer');
+      return;
+    }
+  }
 
   konamiBuffer.push(key);
   if (konamiBuffer.length > konami.length) konamiBuffer.shift();
