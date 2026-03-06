@@ -369,6 +369,13 @@ h4 { margin: 0 0 4px; font-size: 22px; }
   box-shadow: inset 0 0 0 1px rgba(125,255,139,.28), 0 0 32px rgba(125,255,139,.4);
 }
 
+.demo-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .story { padding: 30px 0 70px; position: relative; }
 .scene { height: 250vh; position: relative; }
 .sticky {
@@ -1012,6 +1019,55 @@ code {
 .thanks .ad-slot {
   opacity: 1 !important;
   visibility: visible !important;
+}
+
+.qr-feedback {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 120px;
+  padding-bottom: 120px;
+}
+
+.qr-feedback .panel-title {
+  text-align: center;
+}
+
+.qr-wrap {
+  width: min(500px, 92vw);
+  margin: 16px auto 0;
+  border: 1px solid rgba(255, 90, 90, 0.45);
+  border-radius: 18px;
+  background: linear-gradient(150deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+  box-shadow: 0 0 0 1px rgba(255,90,90,.12) inset, 0 0 20px var(--retro-red-soft), var(--shadow);
+  padding: 24px 22px;
+  text-align: center;
+}
+
+.qr-image {
+  width: min(220px, 70vw);
+  height: auto;
+  display: block;
+  margin: 0 auto 14px;
+  border-radius: 8px;
+  image-rendering: pixelated;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.22), 0 0 26px rgba(125,255,139,.2);
+}
+
+.qr-title {
+  margin: 0;
+  color: #e7ecf9;
+  font-size: clamp(18px, 2.5vw, 24px);
+  font-weight: 700;
+}
+
+.qr-note {
+  margin: 8px 0 0;
+  color: #a7b3c9;
+  font-size: 13px;
+  letter-spacing: .04em;
 }
 
 .faq-list {
