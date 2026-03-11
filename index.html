@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>OpenClaw 安装指南</title>
-  <meta name="description" content="OpenClaw 安装与配置：环境准备、OpenClaw 安装、本地模型与付费模型、TG/WA 配置" />
+  <meta name="description" content="OpenClaw 安装与配置：环境准备、安装命令、模型配置、TG/WA 配置" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -28,11 +28,10 @@
     <div class="logo">OpenClaw Install</div>
     <nav>
       <a href="#hero">首页</a>
-      <a href="#setup">安装环境</a>
-      <a href="#openclaw">安装 OpenClaw</a>
-      <a href="#ollama">Ollama 本地模型</a>
-      <a href="#kimi25">Kimi 2.5 付费模型</a>
-      <a href="#channels-setup">TG/WA 配置</a>
+      <a href="#setup">环境安装</a>
+      <a href="#install">OpenClaw 安装</a>
+      <a href="#models">模型配置</a>
+      <a href="#channels">聊天软件配置</a>
     </nav>
   </header>
 
@@ -41,121 +40,157 @@
       <img class="hero-logo reveal" src="https://mintcdn.com/clawdhub/A8OxQpxR3DcyCCHY/assets/pixel-lobster.svg?fit=max&auto=format&n=A8OxQpxR3DcyCCHY&q=85&s=7d28d01258a677dc2c3e3ad383948e91" alt="OpenClaw Lobster Logo" />
       <p class="eyebrow reveal">INSTALL GUIDE</p>
       <h1 class="reveal">OpenClaw 安装指南</h1>
-      <p class="lead reveal">本站只保留安装与配置步骤：环境准备 → OpenClaw → 模型 → TG/WA。</p>
+      <p class="lead reveal">完全新手向：环境 → 安装 → 模型 → 聊天软件。</p>
       <div class="cta reveal">
         <a href="#setup" class="btn primary">开始安装</a>
-        <a href="#openclaw" class="btn ghost">直达 OpenClaw</a>
+        <a href="#install" class="btn ghost">直达 OpenClaw</a>
       </div>
     </section>
 
     <section class="panel-block lobster" id="setup">
       <div class="panel-title reveal">
         <p class="eyebrow">SETUP</p>
-        <h2>先装环境，再跑命令</h2>
+        <h2>环境安装</h2>
       </div>
       <div class="cards two">
         <article class="card reveal tilt">
           <h3>macOS 环境</h3>
           <ul>
             <li>Homebrew</li>
-            <li>Node.js（建议 LTS，含 npm）</li>
+            <li>Node.js LTS（含 npm）</li>
             <li>Git</li>
           </ul>
           <h4>安装命令</h4>
+          <div class="code-wrap">
 <pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew install node git
-</code></pre>
+brew install node git</code></pre>
+            <button class="copy-btn" type="button" aria-label="复制命令">
+              <span class="copy-icon" aria-hidden="true"></span><span class="copy-label">复制</span>
+            </button>
+          </div>
           <h4>测试命令</h4>
+          <div class="code-wrap">
 <pre><code>node -v
 npm -v
 git --version</code></pre>
+            <button class="copy-btn" type="button" aria-label="复制命令">
+              <span class="copy-icon" aria-hidden="true"></span><span class="copy-label">复制</span>
+            </button>
+          </div>
         </article>
         <article class="card reveal tilt">
           <h3>Windows 环境</h3>
           <ul>
-            <li>手动安装 Node.js LTS（官方安装包）</li>
-            <li>手动安装 Git for Windows</li>
-            <li>建议使用 PowerShell 或 Windows Terminal</li>
-            <li>推荐可用版本：Node v22.x / npm v10.x / Git 2.50.x 左右</li>
+            <li>Node.js LTS（Windows x64 .msi）</li>
+            <li>Git for Windows（64-bit 安装包）</li>
+            <li>推荐使用 PowerShell 或 Windows Terminal</li>
           </ul>
           <div class="jump-row">
-            <a class="btn ghost" href="https://nodejs.org/en/download" target="_blank" rel="noopener noreferrer">Node.js LTS 下载</a>
-            <a class="btn ghost" href="https://git-scm.com/download/win" target="_blank" rel="noopener noreferrer">Git for Windows 下载</a>
+            <a class="btn ghost" href="https://nodejs.org/en/download" target="_blank" rel="noopener noreferrer">下载 Node.js LTS</a>
+            <a class="btn ghost" href="https://git-scm.com/download/win" target="_blank" rel="noopener noreferrer">下载 Git for Windows</a>
+          </div>
+          <p class="card-desc">提示：下载页里选 LTS（长期支持版），并选择 Windows x64 安装包。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel-block lobster" id="install">
+      <div class="panel-title reveal">
+        <p class="eyebrow">INSTALL</p>
+        <h2>OpenClaw 安装</h2>
+        <p class="lead-mini">官方脚本一键安装 + npm 安装，两种方式任选其一。</p>
+      </div>
+      <div class="cards two">
+        <article class="card reveal">
+          <h3>一键安装（官方脚本）</h3>
+          <p class="card-desc">macOS / Linux / WSL2：</p>
+          <div class="code-wrap">
+<pre><code>curl -fsSL https://openclaw.ai/install.sh | bash</code></pre>
+            <button class="copy-btn" type="button" aria-label="复制命令">
+              <span class="copy-icon" aria-hidden="true"></span><span class="copy-label">复制</span>
+            </button>
+          </div>
+          <p class="card-desc">Windows（PowerShell）：</p>
+          <div class="code-wrap">
+<pre><code>iwr -useb https://openclaw.ai/install.ps1 | iex</code></pre>
+            <button class="copy-btn" type="button" aria-label="复制命令">
+              <span class="copy-icon" aria-hidden="true"></span><span class="copy-label">复制</span>
+            </button>
+          </div>
+        </article>
+        <article class="card reveal">
+          <h3>npm 安装（手动）</h3>
+          <div class="code-wrap">
+<pre><code>npm install -g openclaw@latest
+openclaw onboard --install-daemon</code></pre>
+            <button class="copy-btn" type="button" aria-label="复制命令">
+              <span class="copy-icon" aria-hidden="true"></span><span class="copy-label">复制</span>
+            </button>
+          </div>
+          <h3>安装完成验证</h3>
+          <div class="code-wrap">
+<pre><code>openclaw doctor
+openclaw status
+openclaw dashboard</code></pre>
+            <button class="copy-btn" type="button" aria-label="复制命令">
+              <span class="copy-icon" aria-hidden="true"></span><span class="copy-label">复制</span>
+            </button>
           </div>
         </article>
       </div>
     </section>
 
-    <section class="panel-block lobster" id="openclaw">
+    <section class="panel-block lobster" id="models">
       <div class="panel-title reveal">
-        <p class="eyebrow">OPENCLAW</p>
-        <h2>安装 OpenClaw</h2>
-        <p class="lead-mini">环境准备好之后再安装 OpenClaw CLI。</p>
+        <p class="eyebrow">MODELS</p>
+        <h2>模型配置</h2>
+        <p class="lead-mini">本地模型用 Ollama，云端模型按 provider/model 填写。</p>
       </div>
       <div class="cards two">
         <article class="card reveal">
-          <h3>安装命令</h3>
-<pre><code>npm install -g openclaw</code></pre>
-          <h3>验证命令</h3>
-<pre><code>openclaw --help</code></pre>
-        </article>
-        <article class="card reveal">
-          <h3>官方安装文档</h3>
-          <p class="card-desc">遇到版本或平台差异时，以官方说明为准。</p>
-          <a class="btn quick-install-btn" href="https://docs.openclaw.ai/install" target="_blank" rel="noopener noreferrer">打开安装文档</a>
-        </article>
-      </div>
-    </section>
-
-    <section class="panel-block lobster" id="ollama">
-      <div class="panel-title reveal">
-        <p class="eyebrow">OLLAMA</p>
-        <h2 id="ollama-title-trigger">零成本跑通：Ollama 本地模型</h2>
-        <p class="lead-mini"><a class="btn ghost" href="https://ollama.com/download" target="_blank" rel="noopener noreferrer">点击安装 Ollama</a></p>
-      </div>
-      <div class="cards two">
-        <article class="card reveal">
-          <h3>下载与启动</h3>
+          <h3>Ollama 本地模型</h3>
+          <p class="card-desc">安装 Ollama 后执行：</p>
+          <div class="code-wrap">
 <pre><code>ollama pull qwen2.5:7b
 ollama serve</code></pre>
-          <p class="card-desc">建议：首次用 7B 模型，速度快、资源占用小。</p>
-        </article>
-        <article class="card reveal">
-          <h3>OpenClaw 模型配置</h3>
-<pre><code># OpenClaw 模型配置
-# primary: "ollama/qwen2.5:7b"</code></pre>
+            <button class="copy-btn" type="button" aria-label="复制命令">
+              <span class="copy-icon" aria-hidden="true"></span><span class="copy-label">复制</span>
+            </button>
+          </div>
+          <p class="card-desc">OpenClaw 配置示例：</p>
+          <div class="code-wrap">
+<pre><code># primary: "ollama/qwen2.5:7b"</code></pre>
+            <button class="copy-btn" type="button" aria-label="复制命令">
+              <span class="copy-icon" aria-hidden="true"></span><span class="copy-label">复制</span>
+            </button>
+          </div>
+          <a class="btn ghost" href="https://ollama.com/download" target="_blank" rel="noopener noreferrer">下载 Ollama</a>
           <a class="btn ghost" href="https://ollama.com/library" target="_blank" rel="noopener noreferrer">Ollama 模型库</a>
         </article>
-      </div>
-    </section>
-
-    <section class="panel-block lobster" id="kimi25">
-      <div class="panel-title reveal">
-        <p class="eyebrow">KIMI 2.5</p>
-        <h2>付费模型：Kimi 2.5</h2>
-        <p class="lead-mini">适合已跑通流程、需要稳定效果的场景。</p>
-      </div>
-      <div class="cards two">
-        <article class="card reveal" id="moonshot-config-card" role="button" aria-label="打开 Moonshot 控制台">
-          <h3>配置步骤</h3>
-          <ol>
-            <li>注册 Moonshot 账号</li>
-            <li>充值并获取 API Key</li>
-            <li>在 OpenClaw 配置中填 key</li>
-          </ol>
-          <p class="card-desc">点击卡片可打开 Moonshot 控制台。</p>
-        </article>
         <article class="card reveal">
-          <h3>模型配置示例</h3>
-<pre><code># primary: "moonshot/<kimi-2.5-model-id>"</code></pre>
+          <h3>云端模型（通用配置法）</h3>
+          <ol>
+            <li>去模型厂商官网创建 API Key</li>
+            <li>在 OpenClaw 配置中写入 key</li>
+            <li>设置 primary 为 provider/model</li>
+          </ol>
+          <p class="card-desc">配置示例：</p>
+          <div class="code-wrap">
+<pre><code># primary: "moonshot/<kimi-2.5-model-id>"
+# primary: "openai/<model-id>"
+# primary: "anthropic/<model-id>"</code></pre>
+            <button class="copy-btn" type="button" aria-label="复制命令">
+              <span class="copy-icon" aria-hidden="true"></span><span class="copy-label">复制</span>
+            </button>
+          </div>
         </article>
       </div>
     </section>
 
-    <section class="panel-block lobster" id="channels-setup">
+    <section class="panel-block lobster" id="channels">
       <div class="panel-title reveal">
-        <p class="eyebrow">CHANNEL SETUP</p>
-        <h2>配置聊天软件入口（TG / WhatsApp）</h2>
+        <p class="eyebrow">CHANNELS</p>
+        <h2>聊天软件配置</h2>
       </div>
       <div class="cards two">
         <article class="card reveal">

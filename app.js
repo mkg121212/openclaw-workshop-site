@@ -5,6 +5,7 @@ const tiltEls = [...document.querySelectorAll('.tilt')];
 const sectionEls = [...document.querySelectorAll('section[id]')];
 const navLinks = [...document.querySelectorAll('.nav a[href^="#"]')];
 const navEl = document.querySelector('.nav');
+const copyButtons = [...document.querySelectorAll('.copy-btn')];
 const updateModal = document.getElementById('update-modal');
 const updateCloseBtn = document.getElementById('update-close-btn');
 const updateCloseTargets = [...document.querySelectorAll('[data-update-close]')];
@@ -171,6 +172,43 @@ function updateBackgroundDrift() {
   document.body.style.setProperty('--bg-drift', `${y}px`);
 }
 
+function bindCopyButtons() {
+  if (!copyButtons.length) return;
+  copyButtons.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const wrap = btn.closest('.code-wrap');
+      const code = wrap ? wrap.querySelector('code') : null;
+      const text = code ? code.textContent.trim() : '';
+      if (!text) return;
+
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', 'true');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try { document.execCommand('copy'); } catch {}
+        textarea.remove();
+      }
+
+      const label = btn.querySelector('.copy-label');
+      if (label) {
+        const prev = label.textContent;
+        label.textContent = '已复制';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          label.textContent = prev;
+          btn.classList.remove('copied');
+        }, 1200);
+      }
+    });
+  });
+}
+
 window.addEventListener('scroll', () => {
   updateProgress();
   updateParallax();
@@ -212,6 +250,7 @@ updateActiveNav();
 updateRouteMap();
 updateTitleDrift();
 updateBackgroundDrift();
+bindCopyButtons();
 
 if (window.location.hash) {
   const id = window.location.hash.replace('#', '');
